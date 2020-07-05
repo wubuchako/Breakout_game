@@ -5,6 +5,7 @@ const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 
 let score = 0;
+
 const brickRowCount = 9;
 const brickColumnCount = 5;
 
@@ -16,7 +17,7 @@ const ball = {
     speed:4,
     dx:4,
     dy: -4
-}
+};
 
 //Create paddle props
 const paddle = {
@@ -25,8 +26,8 @@ const paddle = {
     w: 80,
     h: 10,
     speed: 8,
-    ds:0
-}
+    dx:0
+};
 
 //
 const brickInfo = {
@@ -89,8 +90,9 @@ function drawBricks(){
 
 //Move paddle
 function movePaddle(){
-    paddle.x += paddle.x;
-
+    paddle.x += paddle.dx;
+    
+    //wall detection
     if(paddle.x + paddle.w > canvas.width){
         paddle.x = canvas.width - paddle.w;
     }
@@ -104,6 +106,9 @@ function movePaddle(){
 
 //Draw everything
 function draw(){
+    //clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
     drawBall();
     drawPaddle();
     drawScore();
@@ -113,14 +118,36 @@ draw();
 
 //Update canvas drawing and animation
 function update() {
+    
     movePaddle();
 
     draw();
 
     requestAnimationFrame(update);
 }
+update();
 
+//Keydown event
+function keyDown(e){
+    
+    if(e.key === 'Right' || e.key === 'ArrowRight'){
+        paddle.dx = paddle.speed;
+    } else if(e.key === 'Left' || e.key === 'ArrowLeft'){
+        paddle.dx = - paddle.speed;
+    }
+}
 
+//Keyup event
+function keyUp(e){
+    if(e.key === 'Right' || e.key === 'ArrowRight' ||
+       e.key === 'Left' || e.key === 'ArrowLeft'){
+           paddle.dx = 0;
+       } 
+}
+
+//Keyboard event handlers
+document.addEventListener('keydown', keyDown);
+document.addEventListener('keyup', keyUp);
 
 //Rules and close event handlers
 //ボタンをクリックすると、ルールが表示される。
