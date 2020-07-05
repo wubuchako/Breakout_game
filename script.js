@@ -87,6 +87,20 @@ function drawBricks(){
     });
 }
 
+//Move paddle
+function movePaddle(){
+    paddle.x += paddle.x;
+
+    if(paddle.x + paddle.w > canvas.width){
+        paddle.x = canvas.width - paddle.w;
+    }
+
+    if(paddle.x < 0){
+        paddle.x = 0;
+    }
+}
+
+
 
 //Draw everything
 function draw(){
@@ -97,7 +111,14 @@ function draw(){
 }
 draw();
 
+//Update canvas drawing and animation
+function update() {
+    movePaddle();
 
+    draw();
+
+    requestAnimationFrame(update);
+}
 
 
 
