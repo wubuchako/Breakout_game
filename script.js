@@ -14,7 +14,7 @@ const ball = {
     x:canvas.width / 2,
     y:canvas.height / 2,
     size:10,
-    speed:4,
+    speed:3,
     dx:4,
     dy: -4
 };
@@ -102,6 +102,69 @@ function movePaddle(){
     }
 }
 
+//Move ball on canvas
+function moveBall(){
+    ball.x += ball.dx;
+    ball.y += ball.dy;
+
+    //wall collision(right/left)
+    if(ball.x + ball.size > canvas.width || ball.x - ball.size < 0){
+        ball.dx *= -1; //ball.dx = ball.dx * -1
+    }
+
+    //wall collision(top/bottom)
+    if(ball.y + ball.size > canvas.height || ball.y - ball.size < 0){
+        ball.dy *= -1;
+    }
+
+    //move paddle
+    if(ball.x + ball.size > paddle.x &&
+        ball.x + ball.size < paddle.x + paddle.w &&
+        ball.y + ball.size > paddle.y){
+            ball.dy = - ball.speed;
+        }
+    
+    //bricks
+    bricks.forEach(column => {
+        column.forEach(brick => {
+            if(brick.visible){
+                if(ball.x - ball.size > brick.x &&
+                   ball.x + ball.size < brick.x + brick.w &&
+                   ball.y + ball.size > brick.y && 
+                   ball.y - ball.size < brick.y + brick.h){
+                       ball.dy *= -1;
+                       brick.visible = false;
+
+                       increaseScore();
+                   }
+            }
+        });
+    });
+    //hit bottom wall - lose
+    if(ball.y + ball.size > canvas.height){
+        showAllBricks();
+        score= 0;
+    }
+}
+
+// Increase score
+function increaseScore() {
+    score++;
+  
+    if (score % (brickRowCount * brickRowCount) === 0) {
+      showAllBricks();
+    }
+  }
+  
+// Make all bricks appear
+function showAllBricks() {
+    bricks.forEach(column => {
+      column.forEach(brick => (brick.visible = true));
+    });
+}
+
+
+
 
 
 //Draw everything
@@ -120,6 +183,7 @@ draw();
 function update() {
     
     movePaddle();
+    moveBall();
 
     draw();
 
